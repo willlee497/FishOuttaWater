@@ -1,4 +1,5 @@
 import React from 'react';
+import MapboxWithCSV from '../../components/MapboxWithFishes';
 
 export default function Map() {
     return (
@@ -11,8 +12,8 @@ export default function Map() {
                     Explore our bizarre aquatic sightings!
                 </p>
                 <div className="aspect-w-16 aspect-h-9 bg-blue-200 rounded-lg">
-                    <div className="flex items-center justify-center">
-                        <span className="text-6xl">🗺️</span>
+                    <div>
+                        <MapboxWithCSV className="h-10 w-20" />
                     </div>
                 </div>
             </div>

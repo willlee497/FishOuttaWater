@@ -1,4 +1,10 @@
+'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
+
+const BoxGrid = dynamic(() => import('../../components/BoxGrid'), {
+    ssr: false, // Disable server-side rendering for the lazy loading
+});
 
 export default function Recipes() {
     const recipes = [
