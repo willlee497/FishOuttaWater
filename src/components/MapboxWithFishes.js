@@ -8,7 +8,7 @@ import Papa from 'papaparse';
 export default function LeafletMapWithPersistentMarkers() {
     const mapContainer = useRef(null);
     const map = useRef(null);
-    const loadedMarkers = useRef(new Map());
+    const currentMarkers = useRef([]);
 
     const fishImages = [
         '/images/fishy.png',
@@ -18,11 +18,15 @@ export default function LeafletMapWithPersistentMarkers() {
         '/images/fishy5.png',
     ];
 
-    const getRandomFishIcon = () => {
-        const randomImage =
-            fishImages[Math.floor(Math.random() * fishImages.length)];
+    const hashLatLngToIndex = (latitude, longitude) => {
+        const hash = Math.abs(Math.sin(latitude) * Math.cos(longitude) * 10000);
+        return Math.floor(hash) % fishImages.length;
+    };
+
+    const getFishIconForMarker = (latitude, longitude) => {
+        const iconIndex = hashLatLngToIndex(latitude, longitude);
         return L.icon({
-            iconUrl: randomImage,
+            iconUrl: fishImages[iconIndex],
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32],
@@ -64,25 +68,27 @@ export default function LeafletMapWithPersistentMarkers() {
 
     const loadMarkersInView = (data) => {
         const bounds = map.current.getBounds();
+
+        currentMarkers.current.forEach((marker) => map.current.removeLayer(marker));
+        currentMarkers.current = [];
+
         data.forEach((location) => {
             const { name, latitude, longitude, quantity } = location;
-            const latLngKey = `${latitude}-${longitude}`;
+
             if (
                 latitude &&
                 longitude &&
                 bounds.contains([parseFloat(latitude), parseFloat(longitude)])
             ) {
-                if (!loadedMarkers.current.has(latLngKey)) {
-                    const randomFishIcon = getRandomFishIcon();
-                    const marker = L.marker(
-                        [parseFloat(latitude), parseFloat(longitude)],
-                        {
-                            icon: randomFishIcon,
-                        }
-                    ).addTo(map.current);
-                    marker.bindPopup(`<b>${quantity} ${name}</b>`);
-                    loadedMarkers.current.set(latLngKey, marker);
-                }
+                const fishIcon = getFishIconForMarker(parseFloat(latitude), parseFloat(longitude));
+
+                const marker = L.marker([parseFloat(latitude), parseFloat(longitude)], {
+                    icon: fishIcon,
+                }).addTo(map.current);
+
+                marker.bindPopup(`<b>${quantity} ${name}</b>`);
+                
+                currentMarkers.current.push(marker);
             }
         });
     };
