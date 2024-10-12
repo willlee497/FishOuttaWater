@@ -19,7 +19,21 @@ export default function Home() {
                     </p>
                 </div>
             </div>
+            
             <ParallaxFishes className="mb-20" />
+            <div className="relative flex items-center justify-center ">
+                <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
+                    <h1 className="text-4xl font-bold text-center text-blue-600">
+                        Our Message
+                    </h1>
+                    <div className="w-full max-w-4xl mx-auto">
+    <p className="text-lg text-center text-gray-800">
+        Hey, we are Fish Outta Water! We are a team of undergraduate college students working hard to bring light to the problem of nonindigenous aquatic species that are disrupting the environment for our native ecosystems. Our mission is to shine a light on a productive way of fishing that not only benefits our environment, but fills your tummy!
+    </p>
+</div>
+
+                </div>
+            </div>
             <ul className="flex flex-row justify-center">
                 <li className="m-5">
                     <CanvasRevealEffect
@@ -34,6 +48,7 @@ export default function Home() {
                     />
                 </li>
             </ul>
+            
             {/* //     <style jsx>{`
         //         .wave-container {
         //             position: absolute;
@@ -65,5 +80,6 @@ export default function Home() {
         //         }
         //     `}</style> */}
         </div>
+        
     );
 }
