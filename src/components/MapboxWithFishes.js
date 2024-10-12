@@ -122,6 +122,7 @@ export default function LeafletMapWithPersistentMarkers() {
                             <b>${quantity} ${name}</b><br>
                             <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
                             <b>Details:</b> ${fishInfo}
+                            <img src="/images/goldfish.jpg" alt="Fish" />
                         `).openOn(map.current);
                     });
 
