@@ -1,15 +1,19 @@
 'use client';
-import Image from 'next/image';
 import ParallaxFishes from '../components/ParallaxFishes';
 import CanvasRevealEffect from '../components/RevealFish';
 import CardHoverEffect from '../components/CardHover';
 import ThreeDCard from '../components/ThreeDCard';
+import Bubbles from '../components/Bubbles';
 
 export default function Home() {
     return (
-        <div className="relative overflow-hidden bg-blue-100 ">
-            <div className="relative flex items-center justify-center mt-10 ">
-                <div className="bg-white bg-opacity-80 p-8 rounded-lg  duration-300 shadow-lg z-20 mt-10 hover:shadow-2xl">
+        <div className="relative overflow-hidden bg-blue-100">
+            <div className="absolute top-0 left-0 right-0 bottom-0 z-0">
+                <Bubbles />
+            </div>
+
+            <div className="relative z-10 flex items-center justify-center mt-10">
+                <div className="bg-white bg-opacity-80 p-8 rounded-lg duration-300 shadow-lg z-20 mt-10 hover:shadow-2xl">
                     <h1 className="text-4xl font-bold text-center text-blue-600">
                         Fish Outta Water
                     </h1>
@@ -18,11 +22,12 @@ export default function Home() {
                     </p>
                 </div>
             </div>
-            <div className="my-20">
+
+            <div className="relative z-10 my-20">
                 <ParallaxFishes />
             </div>
 
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center z-10">
                 <div className="bg-white bg-opacity-80 p-8 rounded-lg mb-14 shadow-lg hover:shadow-2xl duration-300">
                     <h1 className="text-4xl font-bold text-center text-blue-600">
                         Our Message
@@ -41,22 +46,25 @@ export default function Home() {
                 </div>
             </div>
 
-            <ul className="flex flex-row justify-center">
-                <li className=" z-20 m-8 shadow-lg hover:shadow-2xl duration-300">
+            <ul className="flex flex-row justify-center z-20">
+                <li className="m-8 shadow-lg hover:shadow-2xl duration-300">
                     <CanvasRevealEffect
                         imagePath="/images/goldfish.jpg"
                         revealText="Goldfish"
                     />
                 </li>
-                <li className="z-20 m-8 shadow-lg hover:shadow-2xl duration-300">
+                <li className="m-8 shadow-lg hover:shadow-2xl duration-300">
                     <CanvasRevealEffect
                         imagePath="/images/clownfish.jpg"
                         revealText="Clownfish"
                     />
                 </li>
             </ul>
-            <CardHoverEffect />
-            <ThreeDCard />
+
+            <div className="relative z-10">
+                <CardHoverEffect />
+                <ThreeDCard />
+            </div>
         </div>
     );
 }

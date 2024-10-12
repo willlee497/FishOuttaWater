@@ -90,7 +90,6 @@ export default function LeafletMapWithPersistentMarkers() {
     const loadMarkersInView = (data) => {
         const bounds = map.current.getBounds();
 
-        // Loop through the CSV data and add markers only if not already added
         data.forEach((location) => {
             const { name, latitude, longitude, quantity } = location;
             const latLngKey = `${latitude}-${longitude}`;
@@ -100,7 +99,6 @@ export default function LeafletMapWithPersistentMarkers() {
                 longitude &&
                 bounds.contains([parseFloat(latitude), parseFloat(longitude)])
             ) {
-                // Check if the marker is already added
                 if (!currentMarkers.current.has(latLngKey)) {
                     const fishIcon = getFishIconForMarker(parseFloat(latitude), parseFloat(longitude));
 
@@ -126,7 +124,6 @@ export default function LeafletMapWithPersistentMarkers() {
                         `).openOn(map.current);
                     });
 
-                    // Store the marker in the map
                     currentMarkers.current.set(latLngKey, marker);
                 }
             }
