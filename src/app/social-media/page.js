@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 export default function SocialMedia() {
     const platforms = [
@@ -15,12 +16,46 @@ export default function SocialMedia() {
         'Just spotted a fish with legs. Yes, you read that right!',
     ];
 
+    // Bubble variants for animation
+    const bubbleVariants = {
+        float: {
+            y: [0, -30, 0],
+            transition: {
+                duration: 4,
+                repeat: Infinity,
+                ease: 'easeInOut',
+            },
+        },
+    };
+
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold text-center mb-8 text-blue-600">
+        <div className="relative container mx-auto px-4 py-8">
+            {/* Bubbles */}
+            <div className="absolute inset-0 pointer-events-none z-0">
+                {[...Array(30)].map((_, i) => {
+                    // Generate a random radius between 20px and 60px
+                    const radius = Math.random() * 40 + 20;
+                    return (
+                        <motion.div
+                            key={i}
+                            className="absolute bg-blue-300 rounded-full opacity-40"
+                            style={{
+                                width: `${radius}px`, // Set width to radius
+                                height: `${radius}px`, // Set height to radius for a perfect circle
+                                top: `${Math.random() * 100}%`, // Random vertical position
+                                left: `${Math.random() * 100}%`, // Random horizontal position
+                            }}
+                            variants={bubbleVariants}
+                            animate="float"
+                        />
+                    );
+                })}
+            </div>
+
+            <h1 className="text-4xl font-bold text-center mb-8 text-blue-600 z-10 relative">
                 Fish Outta Water Social Media
             </h1>
-            <div className="max-w-2xl mx-auto space-y-8">
+            <div className="max-w-2xl mx-auto space-y-8 z-10 relative">
                 <p className="text-center text-lg mb-8 text-blue-800">
                     Connect with our community of fish enthusiasts and share
                     your own fucked up fishies experiences!
