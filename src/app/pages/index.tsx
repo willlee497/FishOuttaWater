@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
-const InvasiveFishMap = dynamic(() => import('../src/app/components/InvasiveFishMap'), {
+const InvasiveFishMap = dynamic(() => import('../../components/InvasiveFishMap'), {
   ssr: false,
 });
 
