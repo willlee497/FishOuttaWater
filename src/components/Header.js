@@ -21,7 +21,7 @@ export default function Header() {
                                 {' '}
                                 {/* Added margin to separate the logo and text */}
                                 <h1 className="text-lg font-bold">
-                                    Fucked Up Fishes
+                                    Fish Outta Water
                                 </h1>
                             </li>
                         </ul>

@@ -18,7 +18,7 @@ export default function SocialMedia() {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-center mb-8 text-blue-600">
-                Fucked Up Fishies Social Media
+                Fish Outta Water Social Media
             </h1>
             <div className="max-w-2xl mx-auto space-y-8">
                 <p className="text-center text-lg mb-8 text-blue-800">

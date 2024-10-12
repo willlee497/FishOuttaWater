@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-    title: 'Invasive Fishes Tracker',
+    title: 'Fish Outta Water',
     description: 'We Track The Invasive Fishes Near You!',
 };
 

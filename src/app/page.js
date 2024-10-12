@@ -12,7 +12,7 @@ export default function Home() {
             <div className="relative z-10 flex items-center justify-center min-h-screen">
                 <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
                     <h1 className="text-4xl font-bold text-center text-blue-600">
-                        Fucked Up Fishies
+                        Fish Outta Water
                     </h1>
                     <p className="text-lg text-center text-gray-800">
                         Welcome to the wild world of aquatic oddities!
