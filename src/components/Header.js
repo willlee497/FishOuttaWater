@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Header() {
     return (
-        <header className="group relative bg-blue-400 shadow-md transition-colors duration-300 hover:bg-blue-500">
+        <header className="group relative bg-blue-400 duration-300 hover:bg-blue-500 z-20 shadow-xlg hover:shadow-2xl">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between py-4">
                     <Link href="/">
@@ -19,7 +19,6 @@ export default function Header() {
                             </li>
                             <li className="ml-5">
                                 {' '}
-                                {/* Added margin to separate the logo and text */}
                                 <h1 className="text-lg font-bold">
                                     Fish Outta Water
                                 </h1>

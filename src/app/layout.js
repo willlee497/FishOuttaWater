@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata = {
     title: 'Fish Outta Water',
-    description: 'We Track The Invasive Fishes Near You!',
+    description: 'We Help You Fish The Invasive Fishes Near You!',
 };
 
 export default function RootLayout({ children }) {

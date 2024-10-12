@@ -5,16 +5,15 @@ import { motion } from 'framer-motion';
 
 export default function CanvasRevealEffect({
     imagePath,
-    revealText = 'Invasive Fish', // Default hidden text
+    revealText = 'Invasive Fish',
 }) {
     const [isRevealed, setIsRevealed] = useState(false);
 
     return (
         <div
-            className="relative w-64 h-64 overflow-hidden rounded-lg shadow-lg cursor-pointer"
+            className="relative w-64 h-64 overflow-hidden rounded-lg cursor-pointer"
             onMouseEnter={() => setIsRevealed(true)}
         >
-            {/* Image that is revealed */}
             <motion.img
                 src={imagePath}
                 alt="Revealed Image"
@@ -24,7 +23,6 @@ export default function CanvasRevealEffect({
                 transition={{ duration: 0.8 }}
             />
 
-            {/* Blue wave animation */}
             {!isRevealed && (
                 <motion.svg
                     className="absolute inset-0 w-full h-full z-10"
@@ -35,7 +33,7 @@ export default function CanvasRevealEffect({
                 >
                     <motion.path
                         d="M 0 100 V 100 Q 25 100 50 100 T 100 100 V 100 z"
-                        fill="blue" // Blue wave color
+                        fill="blue"
                         variants={{
                             hidden: {
                                 d: 'M 0 100 V 100 Q 25 100 50 100 T 100 100 V 100 z',
@@ -52,7 +50,6 @@ export default function CanvasRevealEffect({
                             ease: 'easeInOut',
                         }}
                     />
-                    {/* Adding some splashing effect on the wave */}
                     <motion.circle
                         cx="50"
                         cy="25"
@@ -100,7 +97,6 @@ export default function CanvasRevealEffect({
                 </motion.svg>
             )}
 
-            {/* Text revealed at the bottom */}
             {isRevealed && (
                 <motion.div
                     className="absolute bottom-4 left-0 right-0 text-center text-white font-bold text-lg"
@@ -108,11 +104,11 @@ export default function CanvasRevealEffect({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    {revealText} {/* Text passed as a prop */}
+                    <p className="underline">{revealText}</p>
+                    <p className="italic">{`Yes, actually a ${revealText}.`}</p>
                 </motion.div>
             )}
 
-            {/* Optional overlay with hidden message before reveal */}
             {!isRevealed && (
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-20 flex flex-col items-center justify-center">
                     <ul className="text-center text-white font-semibold">
