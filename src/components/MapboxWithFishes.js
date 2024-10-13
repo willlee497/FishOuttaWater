@@ -50,7 +50,7 @@ export default function LeafletMapWithPersistentMarkers() {
             iconUrl: fishImages[iconIndex],
             iconSize: [32, 32],
             iconAnchor: [16, 32],
-            popupAnchor: [0, -32],
+            popupAnchor: [-18, -80],
         });
     };
 

@@ -3,12 +3,12 @@ import { ParallaxScroll } from '../components/ui/parallax-scroll';
 
 const images = [
     '/images/fish1.jpg',
-    '/images/fish2.jpg',
+    '/images/fish20.jpg',
     '/images/fish3.webp',
-    '/images/fish4.webp',
+    '/images/fish19.jpg',
     '/images/fish5.jpg',
-    '/images/fish6.jpg',
-    '/images/fish7.jpg',
+    '/images/fish17.jpg',
+    '/images/fish18.jpg',
     '/images/fish8.webp',
     '/images/fish9.webp',
 ];

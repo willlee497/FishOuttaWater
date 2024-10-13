@@ -17,19 +17,6 @@ export default function Map() {
                     </div>
                 </div>
             </div>
-            <div className="mt-8 flex flex-col items-center space-y-4">
-                <h2 className="text-2xl font-semibold text-blue-800">
-                    Recent Sightings
-                </h2>
-                <ul className="list-disc list-inside space-y-2 text-blue-700">
-                    <li>Two-headed trout in Lake Weirdwater</li>
-                    <li>
-                        Glowing angelfish off the coast of Bioluminescent Bay
-                    </li>
-                    <li>Square-shaped pufferfish near Geometric Reef</li>
-                    <li>Upside-down catfish in Gravity-Defying Creek</li>
-                </ul>
-            </div>
         </div>
     );
 }
