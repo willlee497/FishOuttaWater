@@ -2,15 +2,34 @@
 
 import { useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
-import axios from 'axios';
 import Papa from 'papaparse';
-
-let L;
 
 export default function LeafletMapWithPersistentMarkers() {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const currentMarkers = useRef(new Map());
+
+    let L;
+
+    // Modified handleSearch to return the image URL directly
+    const handleSearch = async (searchTerm) => {
+        try {
+            const response = await fetch(
+                `/api/fetchFishImage?searchTerm=${searchTerm}`
+            );
+            const data = await response.json();
+
+            if (response.ok) {
+                return data.imageUrl;
+            } else {
+                console.error(data.error || 'Failed to fetch the image.');
+                return null;
+            }
+        } catch (err) {
+            console.error('An error occurred while fetching the image.');
+            return null;
+        }
+    };
 
     const fishImages = [
         '/images/fishy.png',
@@ -48,25 +67,19 @@ export default function LeafletMapWithPersistentMarkers() {
         }
     };
 
+    // Modified fetchFishInfo to receive imageUrl from handleSearch
     const fetchFishInfo = async (fishName) => {
-        if (typeof window === 'undefined') return {}; // Prevents running in SSR
+        if (typeof window === 'undefined') return {}; // Prevent running in SSR
 
-        try {
-            const response = await axios.get(`/api/searchImage`, {
-                params: { query: fishName },
-            });
-            const imageUrl = response.data.items[0]?.link;
-            return {
-                info: `${fishName} is a fascinating species known for its unique appearance.`,
-                imageUrl: imageUrl || null,
-            };
-        } catch (error) {
-            console.error('Error fetching fish image:', error);
-            return {
-                info: `${fishName} is a fascinating species known for its unique appearance.`,
-                imageUrl: null,
-            };
-        }
+        // Fetch the image URL directly
+        const imageUrl = await handleSearch(fishName);
+
+        console.log(`Fetched image URL for ${fishName}:`, imageUrl); // Log the image URL
+
+        return {
+            info: `${fishName} is a fascinating species known for its unique appearance.`,
+            imageUrl: imageUrl || null,
+        };
     };
 
     useEffect(() => {
@@ -139,19 +152,20 @@ export default function LeafletMapWithPersistentMarkers() {
 
                         const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
+                        // Use fishInfo.imageUrl directly
                         marker
                             .getPopup()
                             .setContent(
                                 `
-                            <b>${quantity} ${name}</b><br>
-                            <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
-                            <b>Details:</b> ${fishInfo.info}
-                            ${
-                                fishInfo.imageUrl
-                                    ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
-                                    : `<p>Error fetching picture.</p>`
-                            }
-                        `
+                                <b>${quantity} ${name}</b><br>
+                                <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
+                                <b>Details:</b> ${fishInfo.info}
+                                ${
+                                    fishInfo.imageUrl
+                                        ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
+                                        : `<p>Error fetching picture.</p>`
+                                }
+                            `
                             )
                             .openOn(map.current);
                     });
