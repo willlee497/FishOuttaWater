@@ -89,26 +89,11 @@ export default function SocialMedia() {
                             className="w-full"
                         />
                     </div>
-                    <div>
-                        <label className="block mb-2">Select Platforms to Upload</label>
-                        <select
-                            multiple
-                            value={selectedPlatforms}
-                            onChange={handlePlatformChange}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        >
-                            {platforms.map((platform) => (
-                                <option key={platform.name} value={platform.name}>
-                                    {platform.icon} {platform.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
                     <button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
                     >
-                        Open Selected Platforms
+                        Post
                     </button>
                 </form>
                 <div className="grid grid-cols-2 gap-4">
