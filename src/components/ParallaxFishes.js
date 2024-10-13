@@ -2,15 +2,15 @@
 import { ParallaxScroll } from '../components/ui/parallax-scroll';
 
 const images = [
-    '/images/fish1.jpg',
-    '/images/fish20.jpg',
-    '/images/fish3.webp',
+    '/images/image15.jpg',
+    '/images/thelast.jpg',
+    '/images/fishy22.jpg',
+    '/images/fish6.jpg',
+    '/images/fishy25.jpg',
+    '/images/bluegil.jpg',
     '/images/fish21.jpg',
-    '/images/fish5.jpg',
-    '/images/fish17.jpg',
-    '/images/fish18.jpg',
     '/images/fish8.webp',
-    '/images/fish9.webp',
+    '/images/image155.jpg',
 ];
 
 export default function ParallaxFishes() {
