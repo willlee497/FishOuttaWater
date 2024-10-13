@@ -7,7 +7,6 @@ import { Search } from "lucide-react";
 
 const loadMoreRecipes = ({
     loading,
-    setLoading,
     csvDataSetRef,
     setRecipes,
     currentIndexRef
@@ -31,7 +30,10 @@ const loadMoreRecipes = ({
 
     setRecipes((prev) => {
         currentIndexRef.current += 3;
-        return [...prev, ...newRecipes];
+        const uniqueRecipes = newRecipes.filter(
+            (recipe) => !prev.includes(recipe)
+        );
+        return [...prev, ...uniqueRecipes];
     });
 
     loading.current = false;
@@ -63,7 +65,6 @@ export default function Recipes() {
                 // Initial load of recipes
                 loadMoreRecipes({
                     loading: loadingRef,
-                    setLoading: () => {},
                     csvDataSetRef,
                     setRecipes,
                     currentIndexRef,
@@ -102,7 +103,6 @@ export default function Recipes() {
                 if (entries[0].isIntersecting) {
                     loadMoreRecipes({
                         loading: loadingRef,
-                        setLoading: () => {},
                         csvDataSetRef,
                         setRecipes,
                         currentIndexRef,
@@ -253,3 +253,4 @@ export default function Recipes() {
         </div>
     );
 }
+
