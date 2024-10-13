@@ -34,14 +34,14 @@ export default function ThreeDCard() {
                         alt="thumbnail"
                     />
                 </CardItem>
-                <div className="flex justify-center items-center mt-20">
+                <div className="flex justify-center items-center mt-5">
                     <CardItem
                         translateZ="20"
                         as={Link}
                         href="/map"
-                        className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white bg-blue-500 hover:bg-blue-700 text-white transition-transform duration-200"
+                        className="px-6 py-2 rounded-xl text-lg font-semibold dark:text-white bg-blue-500 hover:bg-blue-700 text-white transition-transform duration-200 transform hover:scale-105"
                     >
-                        Try now!
+                        <p className="duration-300">Try now!</p>
                     </CardItem>
                 </div>
             </CardBody>
