@@ -6,7 +6,7 @@ import Papa from 'papaparse';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 
-export default function Component() {
+export default function InteractiveFishMap() {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const currentMarkers = useRef(new Map());
@@ -70,12 +70,9 @@ export default function Component() {
     };
 
     const fetchFishInfo = async (fishName) => {
-        if (typeof window === 'undefined') return {}; // Prevent running in SSR
-
+        if (typeof window === 'undefined') return {};
         const imageUrl = await handleSearch(fishName);
-
         console.log(`Fetched image URL for ${fishName}:`, imageUrl);
-
         return {
             info: `${fishName} is a fascinating species known for its unique appearance.`,
             imageUrl: imageUrl || null,
@@ -85,9 +82,7 @@ export default function Component() {
     const fetchBaitRecommendation = async (fishName) => {
         try {
             console.log('Fetching bait recommendation for:', fishName);
-            const response = await axios.post('/api/GenerateBait', {
-                fishName,
-            });
+            const response = await axios.post('/api/GenerateBait', { fishName });
             console.log('Bait recommendation response:', response.data);
             return response.data.bait;
         } catch (error) {
@@ -156,54 +151,54 @@ export default function Component() {
                         parseFloat(longitude)
                     );
 
-                    const marker = L.marker(
-                        [parseFloat(latitude), parseFloat(longitude)],
-                        {
-                            icon: fishIcon,
-                        }
-                    ).addTo(map.current);
+                    const marker = L.marker([parseFloat(latitude), parseFloat(longitude)], {
+                        icon: fishIcon,
+                    }).addTo(map.current);
 
                     const popup = L.popup({ offset: 25 }).setContent(
-                        '<b>Click for details...</b>'
+                        `<div id="popup-${latLngKey}">
+              <b>${quantity} ${name}</b><br>
+              <div id="address-${latLngKey}">Loading address...</div>
+              <div id="details-${latLngKey}">Loading details...</div>
+              <div id="bait-${latLngKey}">Loading bait recommendation...</div>
+              <div id="image-${latLngKey}">Loading image...</div>
+            </div>`
                     );
                     marker.bindPopup(popup);
 
                     marker.on('click', async () => {
                         try {
-                            const address = await fetchAddress(
-                                latitude,
-                                longitude
-                            );
-                            const fishInfo = await fetchFishInfo(name);
-                            const baitRecommendation =
-                                await fetchBaitRecommendation(name);
+                            marker.openPopup();
 
-                            const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                            // Fetch and update address
+                            fetchAddress(latitude, longitude).then(address => {
+                                const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                                document.getElementById(`address-${latLngKey}`).innerHTML =
+                                    `<b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a>`;
+                            });
 
-                            marker
-                                .getPopup()
-                                .setContent(
-                                    `
-                  <b>${quantity} ${name}</b><br>
-                  <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
-                  <b>Details:</b> ${fishInfo.info}<br>
-                  <b>Recommended Bait:</b><br>${baitRecommendation}
-                  ${
-                      fishInfo.imageUrl
-                          ? `<img src="${fishInfo.imageUrl}" alt="${name}" style="max-width: 200px; max-height: 200px;" />`
-                          : `<p>Error fetching picture.</p>`
-                  }
-                `
-                                )
-                                .openOn(map.current);
+                            // Fetch and update fish info
+                            fetchFishInfo(name).then(fishInfo => {
+                                document.getElementById(`details-${latLngKey}`).innerHTML =
+                                    `<b>Details:</b> ${fishInfo.info}`;
+                                if (fishInfo.imageUrl) {
+                                    document.getElementById(`image-${latLngKey}`).innerHTML =
+                                        `<img src="${fishInfo.imageUrl}" alt="${name}" style="max-width: 200px; max-height: 200px;" />`;
+                                } else {
+                                    document.getElementById(`image-${latLngKey}`).innerHTML =
+                                        `<p>Error fetching picture.</p>`;
+                                }
+                            });
+
+                            // Fetch and update bait recommendation
+                            fetchBaitRecommendation(name).then(baitRecommendation => {
+                                document.getElementById(`bait-${latLngKey}`).innerHTML =
+                                    `<b>Recommended Bait:</b><br>${baitRecommendation}`;
+                            });
+
                         } catch (error) {
-                            console.error(
-                                'Error loading marker details:',
-                                error
-                            );
-                            setError(
-                                `Failed to load marker details: ${error.message}`
-                            );
+                            console.error('Error loading marker details:', error);
+                            setError(`Failed to load marker details: ${error.message}`);
                         }
                     });
 
