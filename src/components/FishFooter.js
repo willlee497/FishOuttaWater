@@ -72,7 +72,7 @@ export default function FishFooter() {
                 .fish-container {
                     position: absolute;
                     left: 0;
-                    top: 7.5%; /* Changed from 40% to 30% to raise the fish */
+                    top: 10%; /* Changed from 40% to 30% to raise the fish */
                     width: 300px;
                     height: 120px;
                     animation: swim 15s linear infinite;

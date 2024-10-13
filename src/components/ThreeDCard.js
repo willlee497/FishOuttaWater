@@ -8,10 +8,10 @@ import Link from 'next/link';
 export default function ThreeDCard() {
     return (
         <CardContainer className="inter-var">
-            <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
+            <CardBody className="bg-gray-50 relative group/card dark:hover:shadow-2xl border-black/[0.1] w-auto sm:w-[30rem] h-auto rounded-xl p-6 border">
                 <CardItem
                     translateZ="50"
-                    className="text-xl font-bold text-neutral-600 dark:text-white"
+                    className="text-xl font-bold text-neutral-600"
                 >
                     The Invasive Fish Tracker!
                 </CardItem>
@@ -41,7 +41,9 @@ export default function ThreeDCard() {
                         href="/map"
                         className="px-6 py-2 rounded-xl text-lg font-semibold dark:text-white bg-blue-500 hover:bg-blue-700 text-white transition-transform duration-200 transform hover:scale-105"
                     >
-                        <p className="duration-300">Try now!</p>
+                        <div className="duration-300 transition-transform hover:scale-110">
+                            <p className="">Try now!</p>
+                        </div>
                     </CardItem>
                 </div>
             </CardBody>

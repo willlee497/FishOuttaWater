@@ -17,7 +17,7 @@ export default function Home() {
                     <h1 className="text-4xl font-bold text-center text-blue-600">
                         Fish Outta Water
                     </h1>
-                    <p className="text-lg text-center text-gray-800">
+                    <p className="text-lg text-center text-gray-800 font-bold">
                         Welcome to the wild world of fishy invaders!
                     </p>
                 </div>

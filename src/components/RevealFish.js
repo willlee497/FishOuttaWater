@@ -11,8 +11,8 @@ export default function CanvasRevealEffect({
 
     return (
         <div
-            className="relative w-64 h-64 overflow-hidden rounded-lg cursor-pointer"
-            onMouseEnter={() => setIsRevealed(true)}
+            className="relative w-64 h-64 overflow-hidden rounded-lg cursor-pointer bg-black/50 duration-300 transition-transform hover:scale-110"
+            onClick={() => setIsRevealed(true)} // Changed from onMouseEnter to onClick
         >
             <motion.img
                 src={imagePath}
@@ -20,7 +20,7 @@ export default function CanvasRevealEffect({
                 className="w-full h-full object-cover"
                 initial={{ opacity: 0 }}
                 animate={isRevealed ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ duration: 0.8 }}
+                transition={{ duration: 3 }}
             />
 
             {!isRevealed && (
@@ -110,10 +110,10 @@ export default function CanvasRevealEffect({
             )}
 
             {!isRevealed && (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-20 flex flex-col items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-radial from-black via-black/50 to-transparent z-20 flex flex-col items-center justify-center">
                     <ul className="text-center text-white font-semibold">
-                        <li>{'Hover Here'}</li>
-                        <li>{'See An Invasive Fish'}</li>
+                        <li>{'Click Here To See'}</li>
+                        <li>{'See a Surprise Invasive Fish'}</li>
                     </ul>
                 </div>
             )}
