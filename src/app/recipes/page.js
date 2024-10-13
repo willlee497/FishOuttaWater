@@ -224,17 +224,53 @@ export default function Recipes() {
                         ref={index === displayRecipes.length - 1 ? lastRecipeElementRef : null}
                     >
                         <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
-                            <span className="text-6xl">🐟</span>
-                        </div>
+                        {['🐠', '🐟', '🍣','🎏','🎣','🐡','🥗','🍔','🌮','🥪'].slice((index % 10), (index % 10) + 1).map((emoji, emojiIndex) => (
+                            <span key={emojiIndex} className="text-6xl">
+                                {emoji}
+                            </span>
+                        ))}
+                    </div>
                         <div className="p-4">
                             <h2 className="text-xl font-semibold mb-2 text-blue-800">
                                 {recipe}
                             </h2>
                             <p className="text-blue-600">
-                                A delightfully strange dish that will
-                                tantalize your taste buds and challenge
-                                your culinary expectations.
-                            </p>
+                            {[
+                                "Discover a delightful way to cook with this unique fish.",
+                                "Explore a new flavor that will excite your taste buds.",
+                                "Bring something different to the table with this fresh recipe.",
+                                "Elevate your meal with a creative fish dish.",
+                                "Ready to try something new? This fish is a perfect choice.",
+                                "Add bold, unexpected flavors to your cooking with this fish.",
+                                "Enjoy a culinary adventure with this fish-inspired recipe.",
+                                "Turn your meal into a masterpiece with this flavorful fish.",
+                                "Surprise your guests with a unique fish dish that stands out.",
+                                "Experience a delightful twist on traditional fish recipes.",
+                                "Create a delicious dish that’s both flavorful and fresh.",
+                                "Explore the perfect combination of taste and creativity with this fish.",
+                                "Spice up your dinner plans with a new take on fish.",
+                                "Dive into a world of flavor with this exciting fish recipe.",
+                                "Unleash your inner chef with this creative fish dish.",
+                                "Discover a new way to enjoy fish with this easy-to-follow recipe.",
+                                "Fresh, flavorful, and ready to impress – this fish dish has it all.",
+                                "Add a splash of creativity to your cooking with this fish.",
+                                "Savor the taste of something unique and delicious with this fish.",
+                                "This fish will challenge your culinary expectations in the best way.",
+                                "Ready to cook something extraordinary? Start with this fish.",
+                                "Bring bold, fresh flavors to your plate with this fish recipe.",
+                                "Perfect for adventurous eaters – try this fish for dinner.",
+                                "A fresh fish recipe that’s perfect for any occasion.",
+                                "Enjoy a new, exciting way to cook fish with this recipe.",
+                                "Discover a fish dish that’s both delightful and easy to make.",
+                                "A simple yet delicious fish recipe to add variety to your meals.",
+                                "Shake up your cooking routine with this flavorful fish dish.",
+                                "This fish offers a tasty and unique twist for your dinner plans.",
+                                "A flavorful fish dish that’s perfect for your next culinary adventure."
+                                ].slice((index % 30), (index % 30) + 1).map((emoji, emojiIndex) => (
+                            <span key={emojiIndex} className="text-xl">
+                                {emoji}
+                            </span>
+                                ))}</p>
                             <button
                                 className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                                 onClick={() => openModal(recipe)}
