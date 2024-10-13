@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import axios from 'axios';
 import Papa from 'papaparse';
+
+let L;
 
 export default function LeafletMapWithPersistentMarkers() {
     const mapContainer = useRef(null);
@@ -39,23 +41,37 @@ export default function LeafletMapWithPersistentMarkers() {
                 `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
             );
             const data = await response.json();
-            return data.display_name || "Address not found";
+            return data.display_name || 'Address not found';
         } catch (error) {
             console.error('Error fetching address:', error);
-            return "Address not available";
+            return 'Address not available';
         }
     };
 
     const fetchFishInfo = async (fishName) => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(`${fishName} is a fascinating species known for its unique appearance.`);
-            }, 1000);
-        });
+        if (typeof window === 'undefined') return {}; // Prevents running in SSR
+
+        try {
+            const response = await axios.get(`/api/searchImage`, {
+                params: { query: fishName },
+            });
+            const imageUrl = response.data.items[0]?.link;
+            return {
+                info: `${fishName} is a fascinating species known for its unique appearance.`,
+                imageUrl: imageUrl || null,
+            };
+        } catch (error) {
+            console.error('Error fetching fish image:', error);
+            return {
+                info: `${fishName} is a fascinating species known for its unique appearance.`,
+                imageUrl: null,
+            };
+        }
     };
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            L = require('leaflet');
             if (!map.current && mapContainer.current) {
                 map.current = L.map(mapContainer.current).setView(
                     [37.7749, -122.4194],
@@ -100,28 +116,44 @@ export default function LeafletMapWithPersistentMarkers() {
                 bounds.contains([parseFloat(latitude), parseFloat(longitude)])
             ) {
                 if (!currentMarkers.current.has(latLngKey)) {
-                    const fishIcon = getFishIconForMarker(parseFloat(latitude), parseFloat(longitude));
+                    const fishIcon = getFishIconForMarker(
+                        parseFloat(latitude),
+                        parseFloat(longitude)
+                    );
 
-                    const marker = L.marker([parseFloat(latitude), parseFloat(longitude)], {
-                        icon: fishIcon,
-                    }).addTo(map.current);
+                    const marker = L.marker(
+                        [parseFloat(latitude), parseFloat(longitude)],
+                        {
+                            icon: fishIcon,
+                        }
+                    ).addTo(map.current);
 
-                    marker.bindPopup(`<b>Click for details...</b>`).openPopup();
+                    const popup = L.popup({ offset: 25 }).setContent(
+                        '<b>Click for details...</b>'
+                    );
+                    marker.bindPopup(popup);
 
                     marker.on('click', async () => {
-                        marker.getPopup().setContent(`<b>Loading details...</b>`).openOn(map.current);
-
                         const address = await fetchAddress(latitude, longitude);
                         const fishInfo = await fetchFishInfo(name);
 
                         const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-                        marker.getPopup().setContent(`
+                        marker
+                            .getPopup()
+                            .setContent(
+                                `
                             <b>${quantity} ${name}</b><br>
                             <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
-                            <b>Details:</b> ${fishInfo}
-                            <img src="/images/goldfish.jpg" alt="Fish" />
-                        `).openOn(map.current);
+                            <b>Details:</b> ${fishInfo.info}
+                            ${
+                                fishInfo.imageUrl
+                                    ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
+                                    : `<p>Error fetching picture.</p>`
+                            }
+                        `
+                            )
+                            .openOn(map.current);
                     });
 
                     currentMarkers.current.set(latLngKey, marker);
