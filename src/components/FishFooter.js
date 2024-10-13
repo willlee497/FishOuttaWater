@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
 const Fish = () => (
     <svg
@@ -43,31 +43,41 @@ const Fish = () => (
             strokeWidth="4"
         />
     </svg>
-)
+);
 
 export default function FishFooter() {
     return (
-        <footer className="bg-sky-200 text-primary-foreground py-4 overflow-hidden relative" style={{ height: '180px' }}>
+        <footer
+            className="bg-sky-200 text-primary-foreground py-4 overflow-hidden relative"
+            style={{ height: '150px' }}
+        >
             <div className="fish-container">
                 <Fish />
             </div>
             <div className="container mx-auto px-4 absolute bottom-4 left-0 right-0 z-10">
-                <div className="text-center text-sky-800">© {new Date().getFullYear()} Fish Outta Water LLC. All rights reserved.</div>
+                <div className="text-center text-sky-800">
+                    © {new Date().getFullYear()} Fish Outta Water LLC. All
+                    rights reserved.
+                </div>
             </div>
             <style jsx>{`
-        @keyframes swim {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100vw); }
-        }
-        .fish-container {
-          position: absolute;
-          left: 0;
-          top: 30%; /* Changed from 40% to 30% to raise the fish */
-          width: 300px;
-          height: 120px;
-          animation: swim 15s linear infinite;
-        }
-      `}</style>
+                @keyframes swim {
+                    0% {
+                        transform: translateX(-100%);
+                    }
+                    100% {
+                        transform: translateX(100vw);
+                    }
+                }
+                .fish-container {
+                    position: absolute;
+                    left: 0;
+                    top: 7.5%; /* Changed from 40% to 30% to raise the fish */
+                    width: 300px;
+                    height: 120px;
+                    animation: swim 15s linear infinite;
+                }
+            `}</style>
         </footer>
-    )
+    );
 }

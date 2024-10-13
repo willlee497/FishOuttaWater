@@ -29,7 +29,9 @@ export default function RootLayout({ children }) {
                 <meta name="description" content={metadata.description} />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+            >
                 <Header />
                 <main className="flex-grow">{children}</main>
                 <FishFooter />

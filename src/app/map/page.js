@@ -1,5 +1,5 @@
 import React from 'react';
-import MapboxWithCSV from '../../components/MapboxWithFishes';
+import MapboxWithCSV from '../../components/FishMap';
 
 export default function Map() {
     return (

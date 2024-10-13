@@ -1,5 +1,6 @@
 import { HoverEffect } from '../components/ui/card-hover-effects';
 
+
 export default function CardHoverEffect() {
     return (
         <div className="max-w-5xl mx-auto px-8">
