@@ -36,11 +36,11 @@ export default function Home() {
                         <p className="text-lg text-center text-gray-800 font-bold">
                             Hey, we are Fish Outta Water! We are a team of
                             undergraduate college students working hard to bring
-                            light to the problem of nonindigenous aquatic
+                            light to the problem of non-indigenous aquatic
                             species that are disrupting the environment for our
                             native ecosystems. Our mission is to shine a light
                             on a productive way of fishing that not only
-                            benefits our environment, but fills your tummy!
+                            benefits our environment, but also fills your tummy!
                         </p>
                     </div>
                 </div>
