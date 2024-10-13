@@ -19,7 +19,7 @@ export default function Header() {
                             </li>
                             <li className="ml-5">
                                 {' '}
-                                <h1 className="text-lg font-bold">
+                                <h1 className="text-lg font-bold text-white">
                                     Fish Outta Water
                                 </h1>
                             </li>
@@ -28,25 +28,25 @@ export default function Header() {
                     <nav className="flex space-x-4 sm:space-x-8">
                         <Link
                             href="/"
-                            className="text-base font-medium text-white hover:text-gray-300 transition-colors duration-300"
+                            className="text-base font-bold font-large text-white hover:text-gray-300 transition-colors duration-300"
                         >
                             Home
                         </Link>
                         <Link
                             href="/map"
-                            className="text-base font-medium text-white hover:text-gray-300 transition-colors duration-300"
+                            className="text-base font-bold font-large text-white hover:text-gray-300 transition-colors duration-300"
                         >
                             Map
                         </Link>
                         <Link
                             href="/recipes"
-                            className="text-base font-medium text-white hover:text-gray-300 transition-colors duration-300"
+                            className="text-base font-bold font-large text-white hover:text-gray-300 transition-colors duration-300"
                         >
                             Recipes
                         </Link>
                         <Link
                             href="/social-media"
-                            className="text-base font-medium text-white hover:text-gray-300 transition-colors duration-300"
+                            className="text-base font-bold font-large text-white hover:text-gray-300 transition-colors duration-300"
                         >
                             Social Media
                         </Link>

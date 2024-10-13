@@ -1,4 +1,3 @@
-// layout.js
 import FishFooter from '../components/FishFooter';
 import localFont from 'next/font/local';
 import './globals.css';
@@ -27,7 +26,7 @@ export default function RootLayout({ children }) {
             <Head>
                 <title>{metadata.title}</title>
                 <meta name="description" content={metadata.description} />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/rounded-logo.png" type="image/png" />
             </Head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
