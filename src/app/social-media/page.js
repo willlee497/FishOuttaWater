@@ -7,12 +7,12 @@ export default function SocialMedia() {
     const [selectedPlatforms, setSelectedPlatforms] = useState([])
     const [file, setFile] = useState(null)
 
-    const platforms = [
-        { name: 'Twitter', icon: '🐦', color: 'bg-blue-400', uploadUrl: 'https://twitter.com/compose/tweet' },
-        { name: 'YouTube', icon: '🎥', color: 'bg-red-600', uploadUrl: 'https://www.youtube.com/upload' },
-        { name: 'Facebook', icon: '👍', color: 'bg-blue-600', uploadUrl: 'https://www.facebook.com/' },
-        { name: 'Instagram', icon: '📷', color: 'bg-pink-500', uploadUrl: 'https://www.instagram.com/' },
-    ]
+   // const platforms = [
+   //     { name: 'Twitter', icon: '🐦', color: 'bg-blue-400', uploadUrl: 'https://twitter.com/compose/tweet' },
+   //     { name: 'YouTube', icon: '🎥', color: 'bg-red-600', uploadUrl: 'https://www.youtube.com/upload' },
+   //     { name: 'Facebook', icon: '👍', color: 'bg-blue-600', uploadUrl: 'https://www.facebook.com/' },
+   //     { name: 'Instagram', icon: '📷', color: 'bg-pink-500', uploadUrl: 'https://www.instagram.com/' },
+   // ]
 
     const posts = [
         'Check out this three-eyed catfish we found!',
@@ -79,16 +79,7 @@ export default function SocialMedia() {
                         onChange={handlePostChange}
                         className="w-full p-2 border border-gray-300 rounded"
                     />
-                    <div>
-                        <label htmlFor="file" className="block mb-2">Upload Image</label>
-                        <input
-                            id="file"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="w-full"
-                        />
-                    </div>
+                    
                     <button
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
@@ -96,20 +87,6 @@ export default function SocialMedia() {
                         Post
                     </button>
                 </form>
-                <div className="grid grid-cols-2 gap-4">
-                    {platforms.map((platform) => (
-                        <a
-                            key={platform.name}
-                            href={platform.uploadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`flex items-center justify-center p-4 rounded-lg ${platform.color} text-white hover:opacity-90 transition-opacity`}
-                        >
-                            <span className="mr-2">{platform.icon}</span>
-                            <span>Open {platform.name}</span>
-                        </a>
-                    ))}
-                </div>
                 <div className="mt-12">
                     <h2 className="text-2xl font-semibold mb-4 text-blue-800">
                         Latest Posts
