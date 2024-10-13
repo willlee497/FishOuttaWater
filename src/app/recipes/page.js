@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Papa from 'papaparse';
+import Fuse from 'fuse.js'; // Import Fuse.js for fuzzy search
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Search } from "lucide-react";
@@ -42,6 +43,7 @@ const loadMoreRecipes = ({
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
     const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const [suggestions, setSuggestions] = useState([]); // For dropdown suggestions
     const loadingRef = useRef(false);  // using ref for loading state
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [recipeDetails, setRecipeDetails] = useState('');
@@ -50,6 +52,13 @@ export default function Recipes() {
     const currentIndexRef = useRef(0);
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
+
+    // Fuse.js options for fuzzy search
+    const fuseOptions = {
+        keys: ['name'], // We are searching based on recipe names
+        includeScore: true,
+        threshold: 0.3,  // The lower the value, the stricter the search
+    };
 
     const fetchCsvData = () => {
         Papa.parse('/cleaned_file.csv', {
@@ -82,13 +91,19 @@ export default function Recipes() {
     }, []);
 
     useEffect(() => {
+        const fuse = new Fuse([...csvDataSetRef.current], fuseOptions);
+
         if (searchTerm) {
-            const filtered = recipes.filter(recipe => 
-                recipe.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            const results = fuse.search(searchTerm);
+            const filtered = results.map(result => result.item);
             setFilteredRecipes(filtered);
+
+            // Set suggestions for the dropdown
+            const suggestionList = results.slice(0, 5).map(result => result.item);
+            setSuggestions(suggestionList);
         } else {
             setFilteredRecipes(recipes);
+            setSuggestions([]);  // Clear suggestions when search term is empty
         }
     }, [searchTerm, recipes]);
 
@@ -162,7 +177,7 @@ export default function Recipes() {
 
             <div className="flex justify-end mb-4">
                 <form onSubmit={handleSearch} className="w-full max-w-xs">
-                    <div className="flex">
+                    <div className="relative flex">
                         <Input
                             type="text"
                             placeholder="Search recipes..."
@@ -174,6 +189,21 @@ export default function Recipes() {
                             <Search className="h-4 w-4" />
                             <span className="sr-only">Search</span>
                         </Button>
+
+                        {/* Suggestions Dropdown */}
+                        {suggestions.length > 0 && (
+                            <ul className="absolute left-0 top-full bg-white shadow-lg mt-1 max-h-48 w-full overflow-y-auto z-10">
+                                {suggestions.map((suggestion, index) => (
+                                    <li
+                                        key={index}
+                                        className="px-4 py-2 hover:bg-blue-200 cursor-pointer"
+                                        onClick={() => setSearchTerm(suggestion)}
+                                    >
+                                        {suggestion}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                 </form>
             </div>
@@ -253,4 +283,5 @@ export default function Recipes() {
         </div>
     );
 }
+
 
