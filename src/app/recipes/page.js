@@ -1,23 +1,24 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Papa from 'papaparse';
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Search } from "lucide-react";
 
-// Keep loadMoreRecipes function as it is
 const loadMoreRecipes = ({
     loading,
     setLoading,
     csvDataSetRef,
     setRecipes,
-    currentIndexRef,
+    currentIndexRef
 }) => {
     if (loading.current) return;
     if (!csvDataSetRef.current || csvDataSetRef.current.size === 0) {
-        setLoading(false);
+        console.log("No data in csvDataSetRef");
         return;
     }
 
     loading.current = true;
-    setLoading(true);
 
     const csvDataArray = Array.from(csvDataSetRef.current);
     const nextIndex = currentIndexRef.current % csvDataArray.length;
@@ -34,18 +35,19 @@ const loadMoreRecipes = ({
     });
 
     loading.current = false;
-    setLoading(false);
 };
 
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const loadingRef = useRef(false);
+    const [filteredRecipes, setFilteredRecipes] = useState([]);
+    const loadingRef = useRef(false);  // using ref for loading state
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [recipeDetails, setRecipeDetails] = useState('');
     const [isLoadingRecipe, setIsLoadingRecipe] = useState(false);
     const csvDataSetRef = useRef(new Set());
     const currentIndexRef = useRef(0);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState(null);
 
     const fetchCsvData = () => {
         Papa.parse('/cleaned_file.csv', {
@@ -61,7 +63,7 @@ export default function Recipes() {
                 // Initial load of recipes
                 loadMoreRecipes({
                     loading: loadingRef,
-                    setLoading,
+                    setLoading: () => {},
                     csvDataSetRef,
                     setRecipes,
                     currentIndexRef,
@@ -69,7 +71,7 @@ export default function Recipes() {
             },
             error: function (error) {
                 console.error('Error parsing CSV:', error);
-                setLoading(false);
+                setError('Failed to load recipes. Please try again later.');
             },
         });
     };
@@ -78,7 +80,17 @@ export default function Recipes() {
         fetchCsvData();
     }, []);
 
-    // Use a callback ref to attach the observer to the last recipe element
+    useEffect(() => {
+        if (searchTerm) {
+            const filtered = recipes.filter(recipe => 
+                recipe.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredRecipes(filtered);
+        } else {
+            setFilteredRecipes(recipes);
+        }
+    }, [searchTerm, recipes]);
+
     const observerRef = useRef();
     const lastRecipeElementRef = useCallback(
         (node) => {
@@ -90,7 +102,7 @@ export default function Recipes() {
                 if (entries[0].isIntersecting) {
                     loadMoreRecipes({
                         loading: loadingRef,
-                        setLoading,
+                        setLoading: () => {},
                         csvDataSetRef,
                         setRecipes,
                         currentIndexRef,
@@ -109,7 +121,6 @@ export default function Recipes() {
         setIsLoadingRecipe(true);
 
         try {
-            // Make a POST request to the API route
             const response = await fetch('../api/generateRecipe', {
                 method: 'POST',
                 headers: {
@@ -119,14 +130,11 @@ export default function Recipes() {
             });
 
             if (!response.ok) {
-                throw new Error(
-                    `API request failed with status ${response.status}`
-                );
+                throw new Error(`API request failed with status ${response.status}`);
             }
 
             const data = await response.json();
-            const recipeText = data.recipe;
-            setRecipeDetails(recipeText);
+            setRecipeDetails(data.recipe);
         } catch (error) {
             console.error('Error fetching recipe:', error);
             setRecipeDetails('Failed to load recipe details.');
@@ -140,75 +148,75 @@ export default function Recipes() {
         setRecipeDetails('');
     };
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+    };
+
+    const displayRecipes = searchTerm ? filteredRecipes : recipes;
+
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-center mb-8 text-blue-600">
                 Fish Outta Water Recipes
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {recipes.map((recipe, index) => {
-                    if (recipes.length === index + 1) {
-                        // Attach ref to the last element
-                        return (
-                            <div
-                                key={index}
-                                className="bg-white rounded-lg shadow-md overflow-hidden"
-                                ref={lastRecipeElementRef}
-                            >
-                                <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
-                                    <span className="text-6xl">🐟</span>
-                                </div>
-                                <div className="p-4">
-                                    <h2 className="text-xl font-semibold mb-2 text-blue-800">
-                                        {recipe}
-                                    </h2>
-                                    <p className="text-blue-600">
-                                        A delightfully strange dish that will
-                                        tantalize your taste buds and challenge
-                                        your culinary expectations.
-                                    </p>
-                                    <button
-                                        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                                        onClick={() => openModal(recipe)}
-                                    >
-                                        View Recipe
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    } else {
-                        return (
-                            <div
-                                key={index}
-                                className="bg-white rounded-lg shadow-md overflow-hidden"
-                            >
-                                <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
-                                    <span className="text-6xl">🐟</span>
-                                </div>
-                                <div className="p-4">
-                                    <h2 className="text-xl font-semibold mb-2 text-blue-800">
-                                        {recipe}
-                                    </h2>
-                                    <p className="text-blue-600">
-                                        A delightfully strange dish that will
-                                        tantalize your taste buds and challenge
-                                        your culinary expectations.
-                                    </p>
-                                    <button
-                                        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                                        onClick={() => openModal(recipe)}
-                                    >
-                                        View Recipe
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    }
-                })}
+            <div className="flex justify-end mb-4">
+                <form onSubmit={handleSearch} className="w-full max-w-xs">
+                    <div className="flex">
+                        <Input
+                            type="text"
+                            placeholder="Search recipes..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="flex-grow"
+                        />
+                        <Button type="submit" className="ml-2">
+                            <Search className="h-4 w-4" />
+                            <span className="sr-only">Search</span>
+                        </Button>
+                    </div>
+                </form>
             </div>
 
-            {loading && (
+            {error && (
+                <div className="text-red-500 text-center mb-4">{error}</div>
+            )}
+
+            {displayRecipes.length === 0 && !loadingRef.current && !error && (
+                <div className="text-center text-gray-500 mt-4">No recipes found.</div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {displayRecipes.map((recipe, index) => (
+                    <div
+                        key={index}
+                        className="bg-white rounded-lg shadow-md overflow-hidden"
+                        ref={index === displayRecipes.length - 1 ? lastRecipeElementRef : null}
+                    >
+                        <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
+                            <span className="text-6xl">🐟</span>
+                        </div>
+                        <div className="p-4">
+                            <h2 className="text-xl font-semibold mb-2 text-blue-800">
+                                {recipe}
+                            </h2>
+                            <p className="text-blue-600">
+                                A delightfully strange dish that will
+                                tantalize your taste buds and challenge
+                                your culinary expectations.
+                            </p>
+                            <button
+                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                onClick={() => openModal(recipe)}
+                            >
+                                View Recipe
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {loadingRef.current && (
                 <div className="text-center text-blue-500 mt-4">
                     Loading more recipes...
                 </div>

@@ -1,17 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import Papa from 'papaparse';
+import axios from 'axios';
+import dynamic from 'next/dynamic';
 
-export default function LeafletMapWithPersistentMarkers() {
+export default function Component() {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const currentMarkers = useRef(new Map());
+    const [error, setError] = useState(null);
+    const [L, setL] = useState(null);
 
-    let L;
-
-    // Modified handleSearch to return the image URL directly
     const handleSearch = async (searchTerm) => {
         try {
             const response = await fetch(
@@ -26,7 +27,7 @@ export default function LeafletMapWithPersistentMarkers() {
                 return null;
             }
         } catch (err) {
-            console.error('An error occurred while fetching the image.');
+            console.error('An error occurred while fetching the image:', err);
             return null;
         }
     };
@@ -45,6 +46,7 @@ export default function LeafletMapWithPersistentMarkers() {
     };
 
     const getFishIconForMarker = (latitude, longitude) => {
+        if (!L) return null;
         const iconIndex = hashLatLngToIndex(latitude, longitude);
         return L.icon({
             iconUrl: fishImages[iconIndex],
@@ -67,14 +69,12 @@ export default function LeafletMapWithPersistentMarkers() {
         }
     };
 
-    // Modified fetchFishInfo to receive imageUrl from handleSearch
     const fetchFishInfo = async (fishName) => {
         if (typeof window === 'undefined') return {}; // Prevent running in SSR
 
-        // Fetch the image URL directly
         const imageUrl = await handleSearch(fishName);
 
-        console.log(`Fetched image URL for ${fishName}:`, imageUrl); // Log the image URL
+        console.log(`Fetched image URL for ${fishName}:`, imageUrl);
 
         return {
             info: `${fishName} is a fascinating species known for its unique appearance.`,
@@ -82,41 +82,61 @@ export default function LeafletMapWithPersistentMarkers() {
         };
     };
 
+    const fetchBaitRecommendation = async (fishName) => {
+        try {
+            console.log('Fetching bait recommendation for:', fishName);
+            const response = await axios.post('/api/GenerateBait', { fishName });
+            console.log('Bait recommendation response:', response.data);
+            return response.data.bait;
+        } catch (error) {
+            console.error('Error fetching bait recommendation:', error);
+            setError(`Failed to fetch bait recommendation: ${error.message}`);
+            return 'Bait recommendation not available';
+        }
+    };
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            L = require('leaflet');
-            if (!map.current && mapContainer.current) {
-                map.current = L.map(mapContainer.current).setView(
-                    [37.7749, -122.4194],
-                    10
-                );
-
-                L.tileLayer(
-                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                    {
-                        maxZoom: 17,
-                        minZoom: 8,
-                        attribution:
-                            'Tiles &copy; Esri &mdash; Source: Esri, USGS, AEX, GeoEye, and the GIS User Community',
-                    }
-                ).addTo(map.current);
-
-                Papa.parse('/cleaned_file.csv', {
-                    download: true,
-                    header: true,
-                    complete: function (results) {
-                        const data = results.data;
-                        loadMarkersInView(data);
-                        map.current.on('moveend', function () {
-                            loadMarkersInView(data);
-                        });
-                    },
-                });
-            }
+            import('leaflet').then((leaflet) => {
+                setL(leaflet.default);
+            });
         }
     }, []);
 
+    useEffect(() => {
+        if (L && !map.current && mapContainer.current) {
+            map.current = L.map(mapContainer.current).setView(
+                [37.7749, -122.4194],
+                10
+            );
+
+            L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                {
+                    maxZoom: 17,
+                    minZoom: 8,
+                    attribution:
+                        'Tiles &copy; Esri &mdash; Source: Esri, USGS, AEX, GeoEye, and the GIS User Community',
+                }
+            ).addTo(map.current);
+
+            Papa.parse('/cleaned_file.csv', {
+                download: true,
+                header: true,
+                complete: function (results) {
+                    const data = results.data;
+                    loadMarkersInView(data);
+                    map.current.on('moveend', function () {
+                        loadMarkersInView(data);
+                    });
+                },
+            });
+        }
+    }, [L]);
+
     const loadMarkersInView = (data) => {
+        if (!L || !map.current) return;
+
         const bounds = map.current.getBounds();
 
         data.forEach((location) => {
@@ -147,27 +167,32 @@ export default function LeafletMapWithPersistentMarkers() {
                     marker.bindPopup(popup);
 
                     marker.on('click', async () => {
-                        const address = await fetchAddress(latitude, longitude);
-                        const fishInfo = await fetchFishInfo(name);
+                        try {
+                            const address = await fetchAddress(latitude, longitude);
+                            const fishInfo = await fetchFishInfo(name);
+                            const baitRecommendation = await fetchBaitRecommendation(name);
 
-                        const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                            const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-                        // Use fishInfo.imageUrl directly
-                        marker
-                            .getPopup()
-                            .setContent(
-                                `
-                                <b>${quantity} ${name}</b><br>
-                                <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
-                                <b>Details:</b> ${fishInfo.info}
-                                ${
-                                    fishInfo.imageUrl
-                                        ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
+                            marker
+                                .getPopup()
+                                .setContent(
+                                    `
+                  <b>${quantity} ${name}</b><br>
+                  <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
+                  <b>Details:</b> ${fishInfo.info}<br>
+                  <b>Recommended Bait:</b><br>${baitRecommendation}
+                  ${fishInfo.imageUrl
+                                        ? `<img src="${fishInfo.imageUrl}" alt="${name}" style="max-width: 200px; max-height: 200px;" />`
                                         : `<p>Error fetching picture.</p>`
-                                }
-                            `
-                            )
-                            .openOn(map.current);
+                                    }
+                `
+                                )
+                                .openOn(map.current);
+                        } catch (error) {
+                            console.error('Error loading marker details:', error);
+                            setError(`Failed to load marker details: ${error.message}`);
+                        }
                     });
 
                     currentMarkers.current.set(latLngKey, marker);
@@ -186,6 +211,11 @@ export default function LeafletMapWithPersistentMarkers() {
                     border: '4px solid black',
                 }}
             />
+            {error && (
+                <div style={{ color: 'red', marginTop: '10px' }}>
+                    Error: {error}
+                </div>
+            )}
         </div>
     );
 }
