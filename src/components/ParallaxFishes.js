@@ -5,7 +5,7 @@ const images = [
     '/images/fish1.jpg',
     '/images/fish20.jpg',
     '/images/fish3.webp',
-    '/images/fish19.jpg',
+    '/images/fish21.jpg',
     '/images/fish5.jpg',
     '/images/fish17.jpg',
     '/images/fish18.jpg',

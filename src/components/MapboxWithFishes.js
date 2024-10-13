@@ -85,7 +85,9 @@ export default function Component() {
     const fetchBaitRecommendation = async (fishName) => {
         try {
             console.log('Fetching bait recommendation for:', fishName);
-            const response = await axios.post('/api/GenerateBait', { fishName });
+            const response = await axios.post('/api/GenerateBait', {
+                fishName,
+            });
             console.log('Bait recommendation response:', response.data);
             return response.data.bait;
         } catch (error) {
@@ -114,7 +116,7 @@ export default function Component() {
                 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                 {
                     maxZoom: 17,
-                    minZoom: 8,
+                    minZoom: 6,
                     attribution:
                         'Tiles &copy; Esri &mdash; Source: Esri, USGS, AEX, GeoEye, and the GIS User Community',
                 }
@@ -168,9 +170,13 @@ export default function Component() {
 
                     marker.on('click', async () => {
                         try {
-                            const address = await fetchAddress(latitude, longitude);
+                            const address = await fetchAddress(
+                                latitude,
+                                longitude
+                            );
                             const fishInfo = await fetchFishInfo(name);
-                            const baitRecommendation = await fetchBaitRecommendation(name);
+                            const baitRecommendation =
+                                await fetchBaitRecommendation(name);
 
                             const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
@@ -182,16 +188,22 @@ export default function Component() {
                   <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
                   <b>Details:</b> ${fishInfo.info}<br>
                   <b>Recommended Bait:</b><br>${baitRecommendation}
-                  ${fishInfo.imageUrl
-                                        ? `<img src="${fishInfo.imageUrl}" alt="${name}" style="max-width: 200px; max-height: 200px;" />`
-                                        : `<p>Error fetching picture.</p>`
-                                    }
+                  ${
+                      fishInfo.imageUrl
+                          ? `<img src="${fishInfo.imageUrl}" alt="${name}" style="max-width: 200px; max-height: 200px;" />`
+                          : `<p>Error fetching picture.</p>`
+                  }
                 `
                                 )
                                 .openOn(map.current);
                         } catch (error) {
-                            console.error('Error loading marker details:', error);
-                            setError(`Failed to load marker details: ${error.message}`);
+                            console.error(
+                                'Error loading marker details:',
+                                error
+                            );
+                            setError(
+                                `Failed to load marker details: ${error.message}`
+                            );
                         }
                     });
 
