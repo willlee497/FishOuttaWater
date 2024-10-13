@@ -1,11 +1,8 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Papa from 'papaparse';
 
-// Remove the OpenAI import
-// import { Configuration, OpenAIApi } from 'openai';
-
-// Define loadMoreRecipes outside the component
+// Keep loadMoreRecipes function as it is
 const loadMoreRecipes = ({
     loading,
     setLoading,
@@ -43,11 +40,10 @@ const loadMoreRecipes = ({
 export default function Recipes() {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(false);
-    const loadingRef = useRef(false); // Use a ref for loading
+    const loadingRef = useRef(false);
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [recipeDetails, setRecipeDetails] = useState('');
     const [isLoadingRecipe, setIsLoadingRecipe] = useState(false);
-    const observerRef = useRef(null);
     const csvDataSetRef = useRef(new Set());
     const currentIndexRef = useRef(0);
 
@@ -78,38 +74,34 @@ export default function Recipes() {
         });
     };
 
-    const observerCallback = (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && !loadingRef.current) {
-            loadMoreRecipes({
-                loading: loadingRef,
-                setLoading,
-                csvDataSetRef,
-                setRecipes,
-                currentIndexRef,
-            });
-        }
-    };
-
     useEffect(() => {
         fetchCsvData();
-
-        const observer = new IntersectionObserver(observerCallback, {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1,
-        });
-
-        if (observerRef.current) {
-            observer.observe(observerRef.current);
-        }
-
-        return () => {
-            if (observerRef.current) {
-                observer.unobserve(observerRef.current);
-            }
-        };
     }, []);
+
+    // Use a callback ref to attach the observer to the last recipe element
+    const observerRef = useRef();
+    const lastRecipeElementRef = useCallback(
+        (node) => {
+            if (loadingRef.current) return;
+
+            if (observerRef.current) observerRef.current.disconnect();
+
+            observerRef.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    loadMoreRecipes({
+                        loading: loadingRef,
+                        setLoading,
+                        csvDataSetRef,
+                        setRecipes,
+                        currentIndexRef,
+                    });
+                }
+            });
+
+            if (node) observerRef.current.observe(node);
+        },
+        [loadingRef, csvDataSetRef, setRecipes, currentIndexRef]
+    );
 
     const openModal = async (recipe) => {
         setSelectedRecipe(recipe);
@@ -117,7 +109,7 @@ export default function Recipes() {
         setIsLoadingRecipe(true);
 
         try {
-            // Make a POST request to the API oute
+            // Make a POST request to the API route
             const response = await fetch('../api/generateRecipe', {
                 method: 'POST',
                 headers: {
@@ -155,34 +147,65 @@ export default function Recipes() {
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {recipes.map((recipe, index) => (
-                    <div
-                        key={index}
-                        className="bg-white rounded-lg shadow-md overflow-hidden"
-                    >
-                        <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
-                            <span className="text-6xl">🐟</span>
-                        </div>
-                        <div className="p-4">
-                            <h2 className="text-xl font-semibold mb-2 text-blue-800">
-                                {recipe}
-                            </h2>
-                            <p className="text-blue-600">
-                                A delightfully strange dish that will tantalize
-                                your taste buds and challenge your culinary
-                                expectations.
-                            </p>
-                            <button
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                                onClick={() => openModal(recipe)}
+                {recipes.map((recipe, index) => {
+                    if (recipes.length === index + 1) {
+                        // Attach ref to the last element
+                        return (
+                            <div
+                                key={index}
+                                className="bg-white rounded-lg shadow-md overflow-hidden"
+                                ref={lastRecipeElementRef}
                             >
-                                View Recipe
-                            </button>
-                        </div>
-                    </div>
-                ))}
-                {/* Observer element */}
-                <div ref={observerRef} className="h-10"></div>
+                                <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
+                                    <span className="text-6xl">🐟</span>
+                                </div>
+                                <div className="p-4">
+                                    <h2 className="text-xl font-semibold mb-2 text-blue-800">
+                                        {recipe}
+                                    </h2>
+                                    <p className="text-blue-600">
+                                        A delightfully strange dish that will
+                                        tantalize your taste buds and challenge
+                                        your culinary expectations.
+                                    </p>
+                                    <button
+                                        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                        onClick={() => openModal(recipe)}
+                                    >
+                                        View Recipe
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div
+                                key={index}
+                                className="bg-white rounded-lg shadow-md overflow-hidden"
+                            >
+                                <div className="aspect-w-16 aspect-h-9 bg-blue-100 flex items-center justify-center">
+                                    <span className="text-6xl">🐟</span>
+                                </div>
+                                <div className="p-4">
+                                    <h2 className="text-xl font-semibold mb-2 text-blue-800">
+                                        {recipe}
+                                    </h2>
+                                    <p className="text-blue-600">
+                                        A delightfully strange dish that will
+                                        tantalize your taste buds and challenge
+                                        your culinary expectations.
+                                    </p>
+                                    <button
+                                        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                                        onClick={() => openModal(recipe)}
+                                    >
+                                        View Recipe
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    }
+                })}
             </div>
 
             {loading && (
