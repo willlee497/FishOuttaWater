@@ -1,3 +1,4 @@
+// components/MapBoxWithFishes.js
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -82,6 +83,16 @@ export default function LeafletMapWithPersistentMarkers() {
         };
     };
 
+    const fetchBaitRecommendation = async (fishName) => {
+        try {
+            const response = await axios.post('/api/GenerateBait', { fishName });
+            return response.data.bait;
+        } catch (error) {
+            console.error('Error fetching bait recommendation:', error);
+            return 'Bait recommendation not available';
+        }
+    };
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             L = require('leaflet');
@@ -149,6 +160,7 @@ export default function LeafletMapWithPersistentMarkers() {
                     marker.on('click', async () => {
                         const address = await fetchAddress(latitude, longitude);
                         const fishInfo = await fetchFishInfo(name);
+                        const baitRecommendation = await fetchBaitRecommendation(name);
 
                         const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
@@ -160,10 +172,9 @@ export default function LeafletMapWithPersistentMarkers() {
                                 <b>${quantity} ${name}</b><br>
                                 <b>Address:</b> <a href="${googleMapsLink}" target="_blank" rel="noopener noreferrer">${address}</a><br>
                                 <b>Details:</b> ${fishInfo.info}
-                                ${
-                                    fishInfo.imageUrl
-                                        ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
-                                        : `<p>Error fetching picture.</p>`
+                                ${fishInfo.imageUrl
+                                    ? `<img src="${fishInfo.imageUrl}" alt="${name}" />`
+                                    : `<p>Error fetching picture.</p>`
                                 }
                             `
                             )
