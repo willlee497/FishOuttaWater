@@ -1,3 +1,5 @@
+// layout.js
+import FishFooter from '../components/FishFooter';
 import localFont from 'next/font/local';
 import './globals.css';
 import Header from '../components/Header';
@@ -27,11 +29,10 @@ export default function RootLayout({ children }) {
                 <meta name="description" content={metadata.description} />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
                 <Header />
-                {children}
+                <main className="flex-grow">{children}</main>
+                <FishFooter />
             </body>
         </html>
     );
