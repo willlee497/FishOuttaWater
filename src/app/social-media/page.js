@@ -1,18 +1,22 @@
 'use client'
 
 import React, { useState } from 'react'
+import { Button } from "../../components/ui/button"
+import { Checkbox } from "../../components/ui/checkbox"
+import { Label } from "../../components/ui/label"
+import { TwitterIcon, YoutubeIcon, FacebookIcon, InstagramIcon } from 'lucide-react'
 
 export default function SocialMedia() {
     const [post, setPost] = useState('')
     const [selectedPlatforms, setSelectedPlatforms] = useState([])
     const [file, setFile] = useState(null)
 
-   // const platforms = [
-   //     { name: 'Twitter', icon: '🐦', color: 'bg-blue-400', uploadUrl: 'https://twitter.com/compose/tweet' },
-   //     { name: 'YouTube', icon: '🎥', color: 'bg-red-600', uploadUrl: 'https://www.youtube.com/upload' },
-   //     { name: 'Facebook', icon: '👍', color: 'bg-blue-600', uploadUrl: 'https://www.facebook.com/' },
-   //     { name: 'Instagram', icon: '📷', color: 'bg-pink-500', uploadUrl: 'https://www.instagram.com/' },
-   // ]
+    const platforms = [
+        { name: 'Twitter', Icon: TwitterIcon, color: 'bg-blue-400 hover:bg-blue-500', uploadUrl: 'https://twitter.com/compose/tweet' },
+        { name: 'YouTube', Icon: YoutubeIcon, color: 'bg-red-600 hover:bg-red-700', uploadUrl: 'https://www.youtube.com/upload' },
+        { name: 'Facebook', Icon: FacebookIcon, color: 'bg-blue-600 hover:bg-blue-700', uploadUrl: 'https://www.facebook.com/' },
+        { name: 'Instagram', Icon: InstagramIcon, color: 'bg-pink-500 hover:bg-pink-600', uploadUrl: 'https://www.instagram.com/' },
+    ]
 
     const posts = [
         'Check out this three-eyed catfish we found!',
@@ -25,10 +29,9 @@ export default function SocialMedia() {
         setPost(e.target.value)
     }
 
-    const handlePlatformChange = (e) => {
-        const value = e.target.value
+    const handlePlatformChange = (platform) => {
         setSelectedPlatforms(prev =>
-            prev.includes(value) ? prev.filter(p => p !== value) : [...prev, value]
+            prev.includes(platform) ? prev.filter(p => p !== platform) : [...prev, platform]
         )
     }
 
@@ -79,13 +82,42 @@ export default function SocialMedia() {
                         onChange={handlePostChange}
                         className="w-full p-2 border border-gray-300 rounded"
                     />
-                    
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                    >
+
+                    <div className="flex flex-wrap gap-4 justify-center">
+                        {platforms.map((platform) => (
+                            <div key={platform.name} className="flex flex-col items-center space-y-2">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className={`${platform.color} text-white w-12 h-12 rounded-full transition-transform hover:scale-110`}
+                                    onClick={() => handlePlatformChange(platform.name)}
+                                >
+                                    <platform.Icon className="w-6 h-6" />
+                                </Button>
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={platform.name}
+                                        checked={selectedPlatforms.includes(platform.name)}
+                                        onCheckedChange={() => handlePlatformChange(platform.name)}
+                                    />
+                                    <Label htmlFor={platform.name}>
+                                        {platform.name}
+                                    </Label>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <input
+                        type="file"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="w-full p-2 border border-gray-300 rounded"
+                    />
+
+                    <Button type="submit" className="w-full">
                         Post
-                    </button>
+                    </Button>
                 </form>
                 <div className="mt-12">
                     <h2 className="text-2xl font-semibold mb-4 text-blue-800">
