@@ -20,3 +20,5 @@ npm run build
 npm start
 
 localhost is on port 3000
+
+deployed on vercel: https://hack-harvard-mu.vercel.app/
